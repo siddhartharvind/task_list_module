@@ -6,14 +6,29 @@
 #include <linux/sched/signal.h>
 
 
+// This function takes a task's state and returns
+// its meaning using the macros defined in
+// <linux/sched.h>
+static char *get_task_state(unsigned int state, 
+	unsigned int exit_state)
+{
+	if (!state) 						return "Running (R)";
+	if (state & TASK_INTERRUPTIBLE) 	return "Sleeping (S)";
+	if (state & TASK_UNINTERRUPTIBLE) 	return "Disk Sleep (D)";
+	if (state & __TASK_STOPPED) 		return "Stopped (T)";
+	if (exit_state & EXIT_ZOMBIE) 		return "Zombie (Z)";
+	return "Unknown";
+}
+
 // This function iterates through the task list
 // and prints each task's PID, name and state.
 static void print_procs(void)
 {
 	struct task_struct *task;
 	for_each_process(task) {
-		printk(KERN_INFO "%d %s %lu\n", \
-			task->pid, task->comm, task->__state
+		printk(KERN_INFO "%d %s %s\n", \
+			task->pid, task->comm, \
+			get_task_state(task->__state, task->exit_state)
 		);
 	}
 }
