@@ -24,10 +24,12 @@ static char *get_task_state(unsigned int state,
 // and prints each task's PID, name and state.
 static void print_procs(void)
 {
+	printk(KERN_INFO "%s: [ %5s ]\t[ %15s ]\t[ %14s ]\n", \
+		THIS_MODULE->name, "PID", "NAME", "STATE");
 	struct task_struct *task;
 	for_each_process(task) {
-		printk(KERN_INFO "%d %s %s\n", \
-			task->pid, task->comm, \
+		printk(KERN_INFO "%s: [ %5d ]\t %16s\t %15s\n", \
+			THIS_MODULE->name, task->pid, task->comm, \
 			get_task_state(task->__state, task->exit_state)
 		);
 	}
@@ -36,9 +38,11 @@ static void print_procs(void)
 // This function is called when the module is loaded.
 int task_list_init(void)
 {
-	printk(KERN_INFO "Loading module...\n");
+	printk(KERN_INFO "%s: Loading module...\n\n", \
+		THIS_MODULE->name);
 
 	print_procs();
+	printk("\n");
 
 	return 0;
 }
@@ -46,7 +50,8 @@ int task_list_init(void)
 // This function is called when the module is removed.
 void task_list_exit(void)
 {
-	printk(KERN_INFO "Removing module...\n");
+	printk(KERN_INFO "%s: Removing module...\n\n", \
+		THIS_MODULE->name);
 }
 
 // Macros for registering module entry and exit points.
