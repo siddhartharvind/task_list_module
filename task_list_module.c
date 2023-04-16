@@ -2,10 +2,28 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 
+#include <linux/sched.h>
+#include <linux/sched/signal.h>
+
+
+// This function iterates through the task list
+// and prints each task's PID, name and state.
+static void print_procs(void)
+{
+	struct task_struct *task;
+	for_each_process(task) {
+		printk(KERN_INFO "%d %s %lu\n", \
+			task->pid, task->comm, task->__state
+		);
+	}
+}
+
 // This function is called when the module is loaded.
 int task_list_init(void)
 {
 	printk(KERN_INFO "Loading module...\n");
+
+	print_procs();
 
 	return 0;
 }
