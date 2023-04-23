@@ -6,6 +6,13 @@
 #include <linux/sched/signal.h>
 
 
+MODULE_LICENSE("GPL");
+MODULE_DESCRIPTION("This is a simple Linux kernel module \
+	that lists all the current tasks in a Linux system, \
+	starting from the `init` task.");
+MODULE_AUTHOR("Siddharth Arvind");
+
+
 // Color codes for printk()
 #ifdef PRINTK_COLORS
 
@@ -56,7 +63,7 @@ static void print_procs(void)
 			"\t\t   " BLUBG("%s") "\n";	
 	printk(fmt, THIS_MODULE->name, "[  PID  ]", "[ NAME ]", "[ STATE ]");
 
-	fmt = KERN_INFO "%s: [ %5d ]\t " WHT("%16s") "\t %15s\n";
+	fmt = KERN_INFO "%s: [ %5d ]" WHT("%21s") "\t\t%15s\n";
 	for_each_process(task) {
 		printk(fmt, THIS_MODULE->name, task->pid, \
 			task->comm, get_task_state(task->__state, \
@@ -86,9 +93,3 @@ void task_list_exit(void)
 // Macros for registering module entry and exit points.
 module_init(task_list_init);
 module_exit(task_list_exit);
-
-MODULE_LICENSE("GPL");
-MODULE_DESCRIPTION("This is a simple Linux kernel module \
-	that lists all the current tasks in a Linux system, \
-	starting from the `init` task.");
-MODULE_AUTHOR("Siddharth Arvind");
