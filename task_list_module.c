@@ -12,6 +12,7 @@ MODULE_DESCRIPTION("This is a simple Linux kernel module \
 	starting from the `init` task.");
 MODULE_AUTHOR("Siddharth Arvind");
 
+#define MODULE_NAME THIS_MODULE->name
 
 // Color codes for printk()
 #ifdef PRINTK_COLORS
@@ -40,8 +41,7 @@ MODULE_AUTHOR("Siddharth Arvind");
 
 
 // This function takes a task's state and returns
-// its meaning using the macros defined in
-// <linux/sched.h>
+// its meaning using the macros defined in <linux/sched.h>
 static char *get_task_state(unsigned int state, 
 	unsigned int exit_state)
 {
@@ -53,6 +53,7 @@ static char *get_task_state(unsigned int state,
 	return MAG("Unknown");
 }
 
+
 // This function iterates through the task list
 // and prints each task's PID, name and state.
 static void print_procs(void)
@@ -61,21 +62,22 @@ static void print_procs(void)
 	char *fmt;
 	fmt = KERN_INFO "%s: " BLUBG("%s") "\t    " BLUBG("%s") \
 			"\t\t   " BLUBG("%s") "\n";	
-	printk(fmt, THIS_MODULE->name, "[  PID  ]", "[ NAME ]", "[ STATE ]");
+	printk(fmt, MODULE_NAME, "[  PID  ]", "[ NAME ]", "[ STATE ]");
 
 	fmt = KERN_INFO "%s: [ %5d ]" WHT("%21s") "\t\t%15s\n";
 	for_each_process(task) {
-		printk(fmt, THIS_MODULE->name, task->pid, \
+		printk(fmt, MODULE_NAME, task->pid, \
 			task->comm, get_task_state(task->__state, \
 			task->exit_state));
 	}
 }
 
+
 // This function is called when the module is loaded.
 int task_list_init(void)
 {
 	printk(KERN_INFO "%s: Loading module...\n\n", \
-		THIS_MODULE->name);
+		MODULE_NAME);
 
 	print_procs();
 	printk("\n");
@@ -83,12 +85,14 @@ int task_list_init(void)
 	return 0;
 }
 
+
 // This function is called when the module is removed.
 void task_list_exit(void)
 {
 	printk(KERN_INFO "%s: Removing module...\n\n", \
-		THIS_MODULE->name);
+		MODULE_NAME);
 }
+
 
 // Macros for registering module entry and exit points.
 module_init(task_list_init);

@@ -11,5 +11,5 @@ echo;
 ps aux > /dev/null 2>&1 ;
 ./zombie.out & ps aux > /dev/null 2>&1 ;
 
-# To run the module test
+# To run the module demo
 make demo colors=1

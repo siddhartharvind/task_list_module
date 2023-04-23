@@ -59,7 +59,7 @@ else
 endif
 
 ldrm:
-# Helper for `test`
+# Helper for `demo`
 	${MAKE} load
 	${MAKE} remove
 
