@@ -16,6 +16,7 @@
 #define CYN(s) 		"\e[01;36m" s "\e[0m"
 #define WHT(s) 		"\e[01;37m" s "\e[0m"
 #define REDBG(s) 	"\e[01;41m" s "\e[0m"
+#define BLUBG(s)	"\e[01;44m" s "\e[0m"
 
 #else // PRINTK_COLORS
 
@@ -26,6 +27,7 @@
 #define CYN(s) s
 #define WHT(s) s
 #define REDBG(s) s
+#define BLUBG(s) s
 
 #endif // PRINTK_COLORS
 
@@ -50,9 +52,9 @@ static void print_procs(void)
 {
 	struct task_struct *task;
 	char *fmt;
-
-	printk(KERN_INFO "%s: [ %5s ]\t[ %15s ]\t[ %14s ]\n", \
-		THIS_MODULE->name, "PID", "NAME", "STATE");
+	fmt = KERN_INFO "%s: " BLUBG("%s") "\t    " BLUBG("%s") \
+			"\t\t   " BLUBG("%s") "\n";	
+	printk(fmt, THIS_MODULE->name, "[  PID  ]", "[ NAME ]", "[ STATE ]");
 
 	fmt = KERN_INFO "%s: [ %5d ]\t " WHT("%16s") "\t %15s\n";
 	for_each_process(task) {
