@@ -11,13 +11,16 @@ ifeq ($(colors),1)
 	CFLAGS_${obj-m} := -DPRINTK_COLORS
 endif
 
-.PHONY: all clean print load remove check
+.PHONY: all clean print load remove check demo
 
 all:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
 
 clean:
 	make -C /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+
+# Recipe to run demo of module
+demo: all ldrm print clean
 
 
 ifeq ($(clear), 1)
@@ -54,6 +57,11 @@ ifeq ($(IS_LOADED), 1)
 else
 	@echo -e 'make: Module $(call yellow,${MODULE_NAME}) is not loaded.'
 endif
+
+ldrm:
+# Helper for `test`
+	${MAKE} load
+	${MAKE} remove
 
 
 check:
