@@ -33,21 +33,41 @@ static char *get_task_state(unsigned int state,
 }
 
 
+
+// This function prints out the header row for the task
+// details to be printed below it.
+static void print_task_header_row(void)
+{
+	static const char *const fmt = \
+		KERN_INFO "%s: " BLUBG("%s") "\t    " BLUBG("%s") \
+			"\t\t   " BLUBG("%s") "\n";
+
+	printk(fmt, MODULE_NAME, "[  PID  ]", "[ NAME ]", "[ STATE ]");
+}
+
+
+// This function prints out the details of a given task:
+// PID, name, and state.
+static void print_task_details(struct task_struct *task)
+{
+	static const char *const fmt = \
+		KERN_INFO "%s: [ %5d ]" WHT("%21s") "\t\t%15s\n";
+
+	printk(fmt, MODULE_NAME, task->pid,
+		task->comm, get_task_state(task->__state,
+		task->exit_state));
+}
+
+
 // This function linearly iterates through the task list
 // and prints each task's PID, name and state.
 static void print_processes_linear(void)
 {
-	struct task_struct *task;
-	char *fmt;
-	fmt = KERN_INFO "%s: " BLUBG("%s") "\t    " BLUBG("%s") \
-			"\t\t   " BLUBG("%s") "\n";	
-	printk(fmt, MODULE_NAME, "[  PID  ]", "[ NAME ]", "[ STATE ]");
+	print_task_header_row();
 
-	fmt = KERN_INFO "%s: [ %5d ]" WHT("%21s") "\t\t%15s\n";
+	struct task_struct *task;
 	for_each_process(task) {
-		printk(fmt, MODULE_NAME, task->pid, \
-			task->comm, get_task_state(task->__state, \
-			task->exit_state));
+		print_task_details(task);
 	}
 }
 
@@ -57,12 +77,7 @@ static void print_processes_linear(void)
 // the child tasks of a given task using depth-first search (DFS).
 static void print_processes_dfs_helper(struct task_struct *task)
 {
-	// Print current task information
-	static const char *const fmt = KERN_INFO "%s: [ %5d ]" WHT("%21s") "\t\t%15s\n";
-	printk(fmt, MODULE_NAME, task->pid, \
-		task->comm, get_task_state(task->__state, \
-		task->exit_state));
-
+	print_task_details(task);
 
 	// DFS on current task's children
 	struct task_struct *child_task;
@@ -78,10 +93,7 @@ static void print_processes_dfs_helper(struct task_struct *task)
 // (DFS) and prints each task's PID, name and state.
 static void print_processes_dfs(void)
 {
-	// Print header
-	static const char *const fmt = KERN_INFO "%s: " BLUBG("%s") "\t    " BLUBG("%s") \
-			"\t\t   " BLUBG("%s") "\n";
-	printk(fmt, MODULE_NAME, "[  PID  ]", "[ NAME ]", "[ STATE ]");
+	print_task_header_row();
 
 	// Print process tree
 	print_processes_dfs_helper(&init_task);
