@@ -16,7 +16,6 @@ MODULE_AUTHOR("Siddharth Arvind");
 
 
 // Color codes for printk()
-#define PRINTK_COLORS
 #include "printk_colors.h"
 
 
@@ -124,7 +123,15 @@ int task_list_init(void)
     printk(KERN_INFO "%s: Loading module...\n\n", \
         MODULE_NAME);
 
-    print_processes_linear();
+    // Default behaviour: print in linear order.
+    #ifdef TASK_LIST_MODE_DFS
+        print_processes_dfs();
+
+    #else // if defined TASK_LIST_MODE_LINEAR
+        print_processes_linear();
+
+    #endif
+
     printk("\n");
 
     return 0;

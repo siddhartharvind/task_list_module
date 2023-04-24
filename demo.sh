@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 
-# Create `zombie.out` executable
+# Create `zombie.out` executable if it does not exist
 if [ ! -e zombie.out ]; then
 	gcc zombie.c -o zombie.out
 fi
@@ -17,8 +17,6 @@ echo;
 ps aux > /dev/null 2>&1 ;
 ./zombie.out & ps aux > /dev/null 2>&1 ;
 
-# To run the module demo
-make demo colors=1
-
-# Remove the `zombie.out` executable
-rm ./zombie.out
+# Run the module demo
+# To use DFS order: mode=1
+make demo colors=1 mode=1
