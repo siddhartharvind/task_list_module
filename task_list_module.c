@@ -35,7 +35,7 @@ static char *get_task_state(unsigned int state,
 
 // This function linearly iterates through the task list
 // and prints each task's PID, name and state.
-static void print_procs(void)
+static void print_processes_linear(void)
 {
 	struct task_struct *task;
 	char *fmt;
@@ -52,13 +52,50 @@ static void print_procs(void)
 }
 
 
+
+// This is a recursive helper function that iterates through
+// the child tasks of a given task using depth-first search (DFS).
+static void print_processes_dfs_helper(struct task_struct *task)
+{
+	// Print current task information
+	static const char *const fmt = KERN_INFO "%s: [ %5d ]" WHT("%21s") "\t\t%15s\n";
+	printk(fmt, MODULE_NAME, task->pid, \
+		task->comm, get_task_state(task->__state, \
+		task->exit_state));
+
+
+	// DFS on current task's children
+	struct task_struct *child_task;
+	struct list_head   *list;
+
+	list_for_each(list, &task->children) {
+		child_task = list_entry(list, struct task_struct, sibling);
+		print_processes_dfs_helper(child_task);
+	}
+}
+
+// This function iterates through the task list using depth-first search
+// (DFS) and prints each task's PID, name and state.
+static void print_processes_dfs(void)
+{
+	// Print header
+	static const char *const fmt = KERN_INFO "%s: " BLUBG("%s") "\t    " BLUBG("%s") \
+			"\t\t   " BLUBG("%s") "\n";
+	printk(fmt, MODULE_NAME, "[  PID  ]", "[ NAME ]", "[ STATE ]");
+
+	// Print process tree
+	print_processes_dfs_helper(&init_task);
+}
+
+
+
 // This function is called when the module is loaded.
 int task_list_init(void)
 {
 	printk(KERN_INFO "%s: Loading module...\n\n", \
 		MODULE_NAME);
 
-	print_procs();
+	print_processes_dfs();
 	printk("\n");
 
 	return 0;
