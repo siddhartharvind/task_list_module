@@ -24,9 +24,7 @@ MODULE_AUTHOR("Siddharth Arvind");
 static
 char *get_task_state_name(unsigned int state, unsigned int exit_state)
 {
-    static const unsigned int task_running = 0;
-
-    if (     state == task_running        )  return   GRN( "Running (R)"    );
+    if (     state == TASK_RUNNING        )  return   GRN( "Running (R)"    );
     if (     state  & TASK_INTERRUPTIBLE  )  return   CYN( "Sleeping (S)"   );
     if (     state  & TASK_UNINTERRUPTIBLE)  return   YEL( "Disk Sleep (D)" );
     if (     state  & __TASK_STOPPED      )  return   RED( "Stopped (T)"    );
