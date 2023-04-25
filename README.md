@@ -1,11 +1,11 @@
 # Linux Kernel Module - Task List Module
 
 This is a basic Linux kernel module whose job is to list all current
-   tasks/processes in the system, starting with the *init* task. It
-   will display the PID, name, and state of each task. It can iterate
-   through the process tree in either linear (in order of PIDs;
-   i.e. breadth-first search or BFS), or in depth-first search
-   (DFS) order.
+  tasks/processes in the system, starting with the *init* task. It
+  will display the PID, name, and state of each task. It can iterate
+  through the process tree in either linear (in order of PIDs;
+  i.e. breadth-first search or BFS), or in depth-first search
+  (DFS) order.
 
 
 ## Steps and Explanation:
@@ -93,7 +93,7 @@ The line 'Removing module...' (from the module exit point function)
 
 ### 3. Displaying task details
 For displaying the details of tasks, we can use:
-- `struct task_struct`  - defined in `<linux/sched.h>`. This has
+- `struct task_struct` - defined in `<linux/sched.h>`. This has
   various members, of which we are interested in:
 
     - `unsigned int __state`
@@ -171,25 +171,29 @@ print_tasks_dfs(init_task);
 ### 4. Demonstration
 For demonstrating the module in action, we use the script `demo.sh`.
 It runs the Makefile to build the module, load it, remove it, and
-   print the output from the kernel log buffer.
+  print the output from the kernel log buffer.
 Additionally, before it runs `$ make`, the script spawns a process
-   and stops it (`$ kill -SIGSTOP`) to create a stopped process. It
-   also uses `zombie.c` to create a program that spawns a zombie
-   process. Both of these should be visible in the module output
-   during the demo.
+  and stops it (`$ kill -SIGSTOP`) to create a stopped process. It
+  also uses `zombie.c` to create a program that spawns a zombie
+  process. Both of these should be visible in the module output
+  during the demo.
 The demo script is recommended for automating all of the above
-   tasks. However, the steps can still be manually done through
-   the Makefile.
+  tasks. However, the steps can still be manually done through
+  the Makefile.
 By default, the demo script will call `make` to set the module to
-   produce colourized output. This can be disabled by omitting the
-   `colors=1` flag when calling `make`.
+  produce colourized output. This can be disabled by omitting the
+  `colors=1` flag when calling `make`.
 
 
 ### 5. Notes
 This module only checks for 5 possible states for a particular
-   task. Additionally, it does not do any exhaustive checking; the
-   first flag that it matches is set as the task state name. This
-   means that combinations of states are not recognized.
+  task. Additionally, it does not do any exhaustive checking; the
+  first flag that it matches is set as the task state name. This
+  means that combinations of states are not recognized.
+
+This module was tested using an Ubuntu 22.04 LTS VM. It was tested on:
+- Kernel release `5.19.0-40-generic`, using GCC 11.3.0
+- Kernel release `6.5.0-35-generic`,  using GCC 12.3.0
 
 
 ### 6. References
