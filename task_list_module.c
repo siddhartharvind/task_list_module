@@ -68,19 +68,8 @@ void print_task_details(struct task_struct *task)
 }
 
 
-// This function linearly iterates through the task list
-// and prints each task's PID, name and state.
-static
-void print_processes_linear(void)
-{
-    print_task_header_row();
 
-    struct task_struct *task;
-    for_each_process(task) {
-        print_task_details(task);
-    }
-}
-
+#if defined TASK_LIST_MODE_DFS
 
 
 // This is a recursive helper function that iterates through
@@ -113,6 +102,26 @@ void print_processes_dfs(void)
 }
 
 
+#else // if ! defined TASK_LIST_MODE_DFS
+
+
+// This function linearly iterates through the task list
+// and prints each task's PID, name and state.
+static
+void print_processes_linear(void)
+{
+    print_task_header_row();
+
+    struct task_struct *task;
+    for_each_process(task) {
+        print_task_details(task);
+    }
+}
+
+
+#endif // if defined TASK_LIST_MODE_DFS
+
+
 
 // This function is called when the module is loaded.
 static
@@ -122,10 +131,13 @@ int task_list_init(void)
         MODULE_NAME);
 
     // Default behaviour: print in linear order.
-    #ifdef TASK_LIST_MODE_DFS
+    // If TASK_LIST_MODE_DFS is defined,
+    // print in DFS order instead.
+
+    #if defined TASK_LIST_MODE_DFS
         print_processes_dfs();
 
-    #else // if defined TASK_LIST_MODE_LINEAR
+    #else // if ! defined TASK_LIST_MODE_DFS
         print_processes_linear();
 
     #endif

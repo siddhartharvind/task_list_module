@@ -11,13 +11,13 @@ ifeq ($(colors), 1)
 	CFLAGS_${obj-m} += -DPRINTK_COLORS
 endif
 
-ifeq ($(mode), 1)
-# This sets the module to list tasks using DFS.
-	CFLAGS_${obj-m} += -DTASK_LIST_MODE_DFS
-else
+
 # Default behaviour: for any other value, set
 # the module to list tasks in linear order.
-	CFLAGS_${obj-m} += -DTASK_LIST_MODE_LINEAR
+
+ifeq ($(mode), 1)
+#   This sets the module to list tasks using DFS.
+	CFLAGS_${obj-m} += -DTASK_LIST_MODE_DFS
 endif
 
 
